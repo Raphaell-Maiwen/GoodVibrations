@@ -24,11 +24,11 @@ public class StraightUpVibrator : MonoBehaviour
 
     /*
     Features:
-    -Increase and decrease strenght
     -Record pattern
     -Patterns
         
     DONE:
+    -Increase and decrease strenght
     -Auto-pilot
     */
 
@@ -44,7 +44,7 @@ public class StraightUpVibrator : MonoBehaviour
 
         if (Input.GetButtonDown("BottomButtonP1")) {
             //isAutopilotOn = !isAutopilotOn;
-            
+
             //Use ? operator
             if (currentMode == vibeMode.autoPilot) currentMode = vibeMode.manual;
             else currentMode = vibeMode.autoPilot;
@@ -53,6 +53,19 @@ public class StraightUpVibrator : MonoBehaviour
                 StartAutopilot();
             }
         }
+        else if (currentMode == vibeMode.manual) {
+            if (Input.GetButtonDown("RBPlayer1")) {
+                vibrationStength += 0.1f;
+            }
+            else if (Input.GetButtonDown("LBPlayer1")) {
+                vibrationStength -= 0.1f;
+            }
+            vibrationStength = Mathf.Clamp(vibrationStength, 0f, 1f);
+            GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
+        }
+
+        //Ouain
+        //GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
     }
 
     void StartAutopilot() {
