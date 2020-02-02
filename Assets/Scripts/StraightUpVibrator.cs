@@ -6,13 +6,28 @@ using XInputDotNetPure;
 public class StraightUpVibrator : MonoBehaviour
 {
     public vibeMode currentMode;
-
-    //bool isAutopilotOn;
     public float vibrationStength = 0f;
+
+    //Auto-pilot variables
     public float timePassedSinceLastChange = 0f;
     public float timeUntilNextChange = 0f;
     public const int increaseOdds = 80;
     public bool willIncrease;
+
+    public bool _________________________________________;
+    //Recoring variables
+    public const float recordingTimeLimit = 10f;
+    public float timeRecorded = 0f;
+    public List<float> vibratingValues;
+    public int playbackIndex = 0;
+
+
+    public bool ________________________________________;
+    //Pattern variables 2D array
+    public vibration[] vibrations;
+    public float timeVibrating = 0f;
+    bool pausing = false;
+    public int patternIndex = 0;
 
     public enum vibeMode { 
         manual,
@@ -20,6 +35,18 @@ public class StraightUpVibrator : MonoBehaviour
         recording,
         playback,
         pattern
+    }
+
+    public struct vibration {
+        public float duration;
+        public float pause;
+        public float intensity;
+
+        public vibration(float dur, float pau, float inten) {
+            this.duration = dur;
+            this.pause = pau;
+            this.intensity = inten;
+        }
     }
 
     /*
@@ -34,6 +61,7 @@ public class StraightUpVibrator : MonoBehaviour
 
     private void Awake() {
         currentMode = vibeMode.manual;
+        SetupVibrationPatterns();
     }
 
     // Update is called once per frame
@@ -41,10 +69,17 @@ public class StraightUpVibrator : MonoBehaviour
         if (currentMode == vibeMode.autoPilot) {
             AutoPilot();
         }
+        else if (currentMode == vibeMode.recording) {
+            Record();
+        }
+        else if (currentMode == vibeMode.playback) {
+            Playback();
+        }
+        else if (currentMode == vibeMode.pattern) {
+            Pattern();
+        }
 
         if (Input.GetButtonDown("BottomButtonP1")) {
-            //isAutopilotOn = !isAutopilotOn;
-
             //Use ? operator
             if (currentMode == vibeMode.autoPilot) currentMode = vibeMode.manual;
             else currentMode = vibeMode.autoPilot;
@@ -52,6 +87,25 @@ public class StraightUpVibrator : MonoBehaviour
             if (currentMode == vibeMode.autoPilot) {
                 StartAutopilot();
             }
+        }
+        else if (Input.GetButtonDown("LeftButtonP1")) {
+            if (currentMode == vibeMode.recording) currentMode = vibeMode.playback;
+            else if (currentMode == vibeMode.playback) currentMode = vibeMode.manual;
+            //Add a condition that you have to be in manual?
+            else {
+                currentMode = vibeMode.recording;
+                playbackIndex = 0;
+                vibratingValues.Clear();
+            }
+        }
+        else if (Input.GetButtonDown("UpButtonP1")) {
+            //Maybe have to hold to start the pattern mode, and hold to stop it
+            if (currentMode != vibeMode.pattern) {
+                currentMode = vibeMode.pattern;
+                timeVibrating = 0f;
+                GamePad.SetVibration((PlayerIndex)0, vibrations[0].intensity, vibrations[0].intensity);
+            }
+            //Otherwise cycle
         }
         else if (currentMode == vibeMode.manual) {
             if (Input.GetButtonDown("RBPlayer1")) {
@@ -63,9 +117,17 @@ public class StraightUpVibrator : MonoBehaviour
             vibrationStength = Mathf.Clamp(vibrationStength, 0f, 1f);
             GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
         }
-
         //Ouain
         //GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
+    }
+
+    void SetupVibrationPatterns() {
+        //Dur, pau, inten
+        vibrations = new vibration[4];
+        vibrations[0] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[1] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[2] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[3] = new vibration(1.5f, 0.5f, 0.8f);
     }
 
     void StartAutopilot() {
@@ -116,5 +178,56 @@ public class StraightUpVibrator : MonoBehaviour
         else {
             timeUntilNextChange = Random.Range(15f, 30f);
         }
+    }
+
+    void Record() {
+        float newVibratingValue = Input.GetAxis("RTPlayer1");
+
+        print("Recording " + newVibratingValue);
+
+        vibratingValues.Add(newVibratingValue);
+        GamePad.SetVibration((PlayerIndex)0, newVibratingValue, newVibratingValue);
+
+        timeRecorded += Time.deltaTime;
+        if (timeRecorded >= recordingTimeLimit) {
+            timeRecorded = 0f;
+            currentMode = vibeMode.playback;
+        }
+    }
+
+    void Playback() {
+        GamePad.SetVibration((PlayerIndex)0, vibratingValues[playbackIndex], vibratingValues[playbackIndex]);
+        playbackIndex++;
+
+        if (playbackIndex == vibratingValues.Count) {
+            playbackIndex = 0;
+        }
+    }
+
+    void Pattern() {
+        timeVibrating += Time.deltaTime;
+
+        if (!pausing) {
+            if (timeVibrating >= vibrations[patternIndex].duration) {
+                timeVibrating = 0f;
+                pausing = true;
+                vibrationStength = 0f;
+            }
+            else {
+                vibrationStength = vibrations[patternIndex].intensity;
+            }
+        }
+        else if(timeVibrating >= vibrations[patternIndex].pause){
+            timeVibrating = 0f;
+            pausing = false;
+            patternIndex++;
+            vibrationStength = 0f;
+            if (patternIndex == vibrations.Length) {
+                patternIndex = 0;
+                vibrationStength = vibrations[patternIndex].intensity;
+            }
+        }
+
+        GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
     }
 }
