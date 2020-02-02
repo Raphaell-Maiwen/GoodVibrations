@@ -24,10 +24,11 @@ public class StraightUpVibrator : MonoBehaviour
 
     public bool ________________________________________;
     //Pattern variables 2D array
-    public vibration[] vibrations;
+    public List<vibration[]> vibrations;
     public float timeVibrating = 0f;
     bool pausing = false;
-    public int patternIndex = 0;
+    public int patternIndex1 = 0;
+    public int patternIndex2 = 0;
 
     public enum vibeMode { 
         manual,
@@ -103,7 +104,17 @@ public class StraightUpVibrator : MonoBehaviour
             if (currentMode != vibeMode.pattern) {
                 currentMode = vibeMode.pattern;
                 timeVibrating = 0f;
-                GamePad.SetVibration((PlayerIndex)0, vibrations[0].intensity, vibrations[0].intensity);
+                patternIndex1 = 0;
+                patternIndex2 = 0;
+                GamePad.SetVibration((PlayerIndex)0, vibrations[0][0].intensity, vibrations[0][0].intensity);
+            }
+            else {
+                timeVibrating = 0f;
+                patternIndex1++;
+                patternIndex2 = 0;
+                if (patternIndex1 == vibrations.Count) patternIndex1 = 0;
+                vibrationStength = vibrations[patternIndex1][patternIndex2].intensity;
+                GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
             }
             //Otherwise cycle
         }
@@ -123,11 +134,31 @@ public class StraightUpVibrator : MonoBehaviour
 
     void SetupVibrationPatterns() {
         //Dur, pau, inten
-        vibrations = new vibration[4];
-        vibrations[0] = new vibration(0.45f, 0.3f, 0.3f);
-        vibrations[1] = new vibration(0.45f, 0.3f, 0.3f);
-        vibrations[2] = new vibration(0.45f, 0.3f, 0.3f);
-        vibrations[3] = new vibration(1.5f, 0.5f, 0.8f);
+        vibrations = new List<vibration[]>();
+        vibrations.Add(new vibration[4]);
+        vibrations[0][0] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[0][1] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[0][2] = new vibration(0.45f, 0.3f, 0.3f);
+        vibrations[0][3] = new vibration(1.5f, 0.5f, 0.8f);
+
+
+        vibrations.Add(new vibration[4]);
+        vibrations[1][0] = new vibration(1.5f, 0.1f, 0.8f);
+        vibrations[1][1] = new vibration(1.3f, 0.2f, 1f);
+        vibrations[1][2] = new vibration(0.6f, 0.4f, 0.3f);
+        vibrations[1][3] = new vibration(0.5f, 0.5f, 0.2f);
+
+        vibrations.Add(new vibration[8]);
+        vibrations[2][0] = new vibration(0.7f, 0.1f, 0.4f);
+        vibrations[2][1] = new vibration(0.7f, 0.1f, 0.4f);
+        vibrations[2][2] = new vibration(0.7f, 0.1f, 0.8f);
+        vibrations[2][3] = new vibration(0.7f, 0.1f, 0.4f);
+        vibrations[2][4] = new vibration(0.7f, 0.1f, 0.6f);
+        vibrations[2][5] = new vibration(0.7f, 0.1f, 0.6f);
+        vibrations[2][6] = new vibration(0.7f, 0.1f, 1f);
+        vibrations[2][7] = new vibration(0.7f, 0.1f, 0.6f);
+
+        //next paradiddle
     }
 
     void StartAutopilot() {
@@ -208,23 +239,23 @@ public class StraightUpVibrator : MonoBehaviour
         timeVibrating += Time.deltaTime;
 
         if (!pausing) {
-            if (timeVibrating >= vibrations[patternIndex].duration) {
+            if (timeVibrating >= vibrations[patternIndex1][patternIndex2].duration) {
                 timeVibrating = 0f;
                 pausing = true;
                 vibrationStength = 0f;
             }
             else {
-                vibrationStength = vibrations[patternIndex].intensity;
+                vibrationStength = vibrations[patternIndex1][patternIndex2].intensity;
             }
         }
-        else if(timeVibrating >= vibrations[patternIndex].pause){
+        else if(timeVibrating >= vibrations[patternIndex1][patternIndex2].pause){
             timeVibrating = 0f;
             pausing = false;
-            patternIndex++;
+            patternIndex2++;
             vibrationStength = 0f;
-            if (patternIndex == vibrations.Length) {
-                patternIndex = 0;
-                vibrationStength = vibrations[patternIndex].intensity;
+            if (patternIndex2 == vibrations[patternIndex1].Length) {
+                patternIndex2 = 0;
+                vibrationStength = vibrations[patternIndex1][patternIndex2].intensity;
             }
         }
 
