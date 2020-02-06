@@ -5,6 +5,16 @@ using XInputDotNetPure;
 
 public class StraightUpVibrator : MonoBehaviour
 {
+    /*
+    -DONE: Button to cancel any mode
+    -DONE: Recording only starts after the first non-zero value
+    -Patterns where the two halves have different strenghts
+    -Refactor (vibrationStrengthLeft and vibrationStrengthRight + GamePad.SetVibration called at everyupdate instead of
+        being called in functions and such)
+    -Countdown on screen for recording
+    -For BackMassager mode: activate / deactivate controller
+    */
+
     public vibeMode currentMode;
     public float vibrationStength = 0f;
 
@@ -20,10 +30,11 @@ public class StraightUpVibrator : MonoBehaviour
     public float timeRecorded = 0f;
     public List<float> vibratingValues;
     public int playbackIndex = 0;
+    public bool hasStartedRecording;
 
 
     public bool ________________________________________;
-    //Pattern variables 2D array
+    //Pattern variables
     public List<vibration[]> vibrations;
     public float timeVibrating = 0f;
     bool pausing = false;
@@ -49,16 +60,6 @@ public class StraightUpVibrator : MonoBehaviour
             this.intensity = inten;
         }
     }
-
-    /*
-    Features:
-    -Record pattern
-    -Patterns
-        
-    DONE:
-    -Increase and decrease strenght
-    -Auto-pilot
-    */
 
     private void Awake() {
         currentMode = vibeMode.manual;
@@ -96,11 +97,11 @@ public class StraightUpVibrator : MonoBehaviour
             else {
                 currentMode = vibeMode.recording;
                 playbackIndex = 0;
+                hasStartedRecording = false;
                 vibratingValues.Clear();
             }
         }
         else if (Input.GetButtonDown("UpButtonP1")) {
-            //Maybe have to hold to start the pattern mode, and hold to stop it
             if (currentMode != vibeMode.pattern) {
                 currentMode = vibeMode.pattern;
                 timeVibrating = 0f;
@@ -117,6 +118,11 @@ public class StraightUpVibrator : MonoBehaviour
                 GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
             }
             //Otherwise cycle
+        }
+        else if (Input.GetButtonDown("RightButtonP1")) {
+            currentMode = vibeMode.manual;
+            vibrationStength = 0f;
+            GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
         }
         else if (currentMode == vibeMode.manual) {
             if (Input.GetButtonDown("RBPlayer1")) {
@@ -212,17 +218,28 @@ public class StraightUpVibrator : MonoBehaviour
     }
 
     void Record() {
-        float newVibratingValue = Input.GetAxis("RTPlayer1");
+        if (!hasStartedRecording) {
+            float newVibratingValue = Input.GetAxis("RTPlayer1");
+            if (newVibratingValue != 0.0f) {
+                vibratingValues.Add(newVibratingValue);
+                GamePad.SetVibration((PlayerIndex)0, newVibratingValue, newVibratingValue);
+                hasStartedRecording = true;
+            }
+        }
 
-        print("Recording " + newVibratingValue);
+        else if (hasStartedRecording) {
+            float newVibratingValue = Input.GetAxis("RTPlayer1");
 
-        vibratingValues.Add(newVibratingValue);
-        GamePad.SetVibration((PlayerIndex)0, newVibratingValue, newVibratingValue);
+            print("Recording " + newVibratingValue);
 
-        timeRecorded += Time.deltaTime;
-        if (timeRecorded >= recordingTimeLimit) {
-            timeRecorded = 0f;
-            currentMode = vibeMode.playback;
+            vibratingValues.Add(newVibratingValue);
+            GamePad.SetVibration((PlayerIndex)0, newVibratingValue, newVibratingValue);
+
+            timeRecorded += Time.deltaTime;
+            if (timeRecorded >= recordingTimeLimit) {
+                timeRecorded = 0f;
+                currentMode = vibeMode.playback;
+            }
         }
     }
 
