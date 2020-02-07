@@ -5,13 +5,25 @@ using XInputDotNetPure;
 using UnityEngine.UI;
 
 /*
+ Project-wise:
+ -Have a menu
+ -Have particle effects
+ -Have soothing music, maybe ASMR sounds? Music you can change!
+ -Allow up to 4 controllers? Not for February playtesting
+
+
+Make sure how it feels D:
+More time between questions
+"How could this be improved?"
+Tell them SOFTLY to relax
+left right scapula
+Stay silent for a minute should last a minute!!!
+ 
 -At the beginning, explain the game a little bit more
--Implement body parts (with the same logic as instructions)
 -Instruction type: topic of conversation (ask about their day, share a good memory, etc.) (pool with stuff that get out)
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music?
 -Maybe another instruction type.
-
--Remove / improve the "tell them". Put the "ask them if they want to continue" less frequent?
+-Each wording should be also put in a "priority list"
 */
 
 public class BackMassager : MonoBehaviour
@@ -28,9 +40,12 @@ public class BackMassager : MonoBehaviour
 
     public Text textObject;
 
+    AdvicesPool advicesPool;
+
     public enum instructionType { 
         askingFeedback,
-        changeRegion
+        changeRegion,
+        conversations
     }
 
     private void Awake() {
@@ -42,8 +57,10 @@ public class BackMassager : MonoBehaviour
         ShowInstruction("Put the controller on your friend's neck.");
         GamePad.SetVibration((PlayerIndex)0, 0.2f, 0.2f);
 
-        instructions = new instructionType[2]{instructionType.changeRegion, instructionType.askingFeedback};
+        instructions = new instructionType[3]{instructionType.changeRegion, instructionType.askingFeedback, instructionType.conversations};
         RandomizeInstruction();
+
+        advicesPool = GetComponent<AdvicesPool>();
     }
 
     void Update(){
@@ -149,24 +166,27 @@ public class BackMassager : MonoBehaviour
                 message += "Give some love to the " + currentRegion;
             }
         }
+        else if (type == instructionType.conversations) {
+            message = advicesPool.GetAdvice();
+        }
         else if (type == instructionType.askingFeedback) {
             if (textSeed < 20) {
                 message += "Ask them ";
             }
             else if (textSeed < 40) {
-                message += "Tell them ";
-            }
-            else if (textSeed < 60) {
                 message += "Check ";
             }
-            else if (textSeed < 80) {
+            else if (textSeed < 60) {
                 message += "Make sure ";
             }
+            else if (textSeed < 80) {
+                message += "Tell them to relax.";
+            }
             else {
-                message += "Something. [Placeholder]";
+                message += "Are you both feeling good?";
             }
 
-            if (textSeed < 80) {
+            if (textSeed < 60) {
                 int newTextSeed = Random.Range(0, 100);
                 if (newTextSeed < 20) {
                     if (textSeed < 60) message += "how ";
@@ -175,11 +195,13 @@ public class BackMassager : MonoBehaviour
                     message += ".";
                 }
                 else if (newTextSeed < 40) {
-                    if (textSeed < 60) message += "if ";
+                    if (textSeed < 40) message += "if ";
                     message += "it's strong enough.";
                 }
-                else if (newTextSeed < 60 && textSeed < 40) {
-                    message += "some feedback.";
+                else if (newTextSeed < 60) {
+                    if (textSeed < 20) message += "some feedback.";
+                    else if (textSeed < 40) message += "if you feel good.";
+                    else message += "if you want to continue.";
                 }
                 else if (newTextSeed < 80) {
                     if (textSeed < 60) message += "if ";

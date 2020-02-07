@@ -6,13 +6,12 @@ using XInputDotNetPure;
 public class StraightUpVibrator : MonoBehaviour
 {
     /*
-    -DONE: Button to cancel any mode
-    -DONE: Recording only starts after the first non-zero value
     -Patterns where the two halves have different strenghts
     -Refactor (vibrationStrengthLeft and vibrationStrengthRight + GamePad.SetVibration called at everyupdate instead of
         being called in functions and such)
     -Countdown on screen for recording
     -For BackMassager mode: activate / deactivate controller
+    -Rewrite with the new input system?
     */
 
     public vibeMode currentMode;

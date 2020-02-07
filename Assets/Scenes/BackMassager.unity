@@ -479,6 +479,7 @@ GameObject:
   - component: {fileID: 2073886865}
   - component: {fileID: 2073886864}
   - component: {fileID: 2073886866}
+  - component: {fileID: 2073886867}
   m_Layer: 0
   m_Name: BackMassager
   m_TagString: Untagged
@@ -501,11 +502,9 @@ MonoBehaviour:
   timeSinceLastInstruction: 0
   instructionTime: 0
   instructions: 
-  instructionsOdds: []
   currentInstruction: 0
   currentRegion: neck
   bodyParts: []
-  bodyPartsOdds: []
   textObject: {fileID: 1171546491}
 --- !u!4 &2073886865
 Transform:
@@ -542,10 +541,23 @@ MonoBehaviour:
   timeRecorded: 0
   vibratingValues: []
   playbackIndex: 0
+  hasStartedRecording: 0
   ________________________________________: 0
   timeVibrating: 0
   patternIndex1: 0
   patternIndex2: 0
+--- !u!114 &2073886867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073886863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd5554d9c11b3647974419482a942b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2136819676
 GameObject:
   m_ObjectHideFlags: 0
