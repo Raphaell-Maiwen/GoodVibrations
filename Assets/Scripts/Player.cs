@@ -17,14 +17,7 @@ Add joystick interactions:
 -Left and right
 -Up and down
 
-
-DONE:
-Adding a gauge so you can press slightly before end of vibration
-Intensity increases after several good hits (in a row)
-Intensity decreases after several (not in a row, total of the current stage)
-
-    At some points, buttons change: the other player selects it and have to share it vocally, otherwise there's a fault
-
+At some points, buttons change: the other player selects it and have to share it vocally, otherwise there's a fault
 */
 public class Player : MonoBehaviour
 {

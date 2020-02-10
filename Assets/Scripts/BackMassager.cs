@@ -12,18 +12,17 @@ using UnityEngine.UI;
  -Allow up to 4 controllers? Not for February playtesting
 
 
-Make sure how it feels D:
-More time between questions
+More time between questions (and less for other type of prompts?)
 "How could this be improved?"
 Tell them SOFTLY to relax
-left right scapula
 Stay silent for a minute should last a minute!!!
  
--At the beginning, explain the game a little bit more
--Instruction type: topic of conversation (ask about their day, share a good memory, etc.) (pool with stuff that get out)
+-At the beginning, explain the game a little bit more (there's no wrong way to play this game! You can switch whenever, ignore
+    some prompts, blablabla).
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music?
--Maybe another instruction type.
+-Instruction type: cute quotes, wishes, general advices. "I hope you're feeling safe with each other."
 -Each wording should be also put in a "priority list"
+-Skip a promt with A?
 */
 
 public class BackMassager : MonoBehaviour
