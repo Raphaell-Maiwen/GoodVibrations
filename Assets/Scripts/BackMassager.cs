@@ -11,18 +11,14 @@ using UnityEngine.UI;
  -Have soothing music, maybe ASMR sounds? Music you can change!
  -Allow up to 4 controllers? Not for February playtesting
 
-
-More time between questions (and less for other type of prompts?)
-"How could this be improved?"
-Tell them SOFTLY to relax
-Stay silent for a minute should last a minute!!!
- 
+-Rework controls (in part to put the skip prompt on the controller instead) 
 -At the beginning, explain the game a little bit more (there's no wrong way to play this game! You can switch whenever, ignore
     some prompts, blablabla).
--Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music?
+-Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
 -Instruction type: cute quotes, wishes, general advices. "I hope you're feeling safe with each other."
 -Each wording should be also put in a "priority list"
--Skip a promt with A?
+-Add particle effects
+-Add sounds (something ASMR-ish, a soundtrack too?)
 */
 
 public class BackMassager : MonoBehaviour
@@ -39,7 +35,9 @@ public class BackMassager : MonoBehaviour
 
     public Text textObject;
 
-    AdvicesPool advicesPool;
+    ConversationTopicsPool advicesPool;
+
+    string instructionMessage;
 
     public enum instructionType { 
         askingFeedback,
@@ -59,27 +57,49 @@ public class BackMassager : MonoBehaviour
         instructions = new instructionType[3]{instructionType.changeRegion, instructionType.askingFeedback, instructionType.conversations};
         RandomizeInstruction();
 
-        advicesPool = GetComponent<AdvicesPool>();
+        advicesPool = GetComponent<ConversationTopicsPool>();
     }
 
     void Update(){
         timeSinceLastInstruction += Time.deltaTime;
 
         if (timeSinceLastInstruction >= instructionTime) {
-            RandomizeTime();
-            ShowInstruction(BuildInstructionMessage(currentInstruction));
-            RandomizeInstruction();
+            GenerateNextInstruction();
         }
+
+        else if (Input.GetKeyDown(KeyCode.N)) {
+            GenerateNextInstruction();
+        }
+    }
+
+    void GenerateNextInstruction() {
+        instructionMessage = BuildInstructionMessage(currentInstruction);
+        ShowInstruction(instructionMessage);
+        RandomizeInstruction();
+        RandomizeTime();
     }
 
     void RandomizeTime() {
         int shortOdds = Random.Range(0, 100);
 
-        if (shortOdds < 69) {
-            instructionTime = Random.Range(5f, 15f);
+        if (currentInstruction == instructionType.conversations) {
+            if (shortOdds < 69) {
+                instructionTime = Random.Range(20f, 40f);
+            }
+            else {
+                instructionTime = Random.Range(40f, 60f);
+            }
+        }
+        else if (instructionMessage == "Stay silent for a minute (except if you wanna stop playing, then please speak up!)") {
+            instructionTime = 60f;
         }
         else {
-            instructionTime = Random.Range(15f, 30f);
+            if (shortOdds < 69) {
+                instructionTime = Random.Range(5f, 10f);
+            }
+            else {
+                instructionTime = Random.Range(10f, 15f);
+            }
         }
 
         timeSinceLastInstruction = 0f;
@@ -150,19 +170,19 @@ public class BackMassager : MonoBehaviour
         if (type == instructionType.changeRegion) {
             RandomizeBodyPart();
             if (textSeed < 20) {
-                message += "Move to the " + currentRegion;
+                message += "Move to the " + currentRegion + ".";
             }
             else if (textSeed < 40) {
-                message += "Massage the " + currentRegion;
+                message += "Massage the " + currentRegion + ".";
             }
             else if (textSeed < 60) {
-                message += "Bring the controller to the " + currentRegion;
+                message += "Bring the controller to the " + currentRegion + ".";
             }
             else if (textSeed < 80) {
                 message += "The " + currentRegion + " is tense.";
             }
             else {
-                message += "Give some love to the " + currentRegion;
+                message += "Give some love to the " + currentRegion + ".";
             }
         }
         else if (type == instructionType.conversations) {
@@ -179,7 +199,7 @@ public class BackMassager : MonoBehaviour
                 message += "Make sure ";
             }
             else if (textSeed < 80) {
-                message += "Tell them to relax.";
+                message += "How can this moment be improved?";
             }
             else {
                 message += "Are you both feeling good?";
@@ -199,8 +219,8 @@ public class BackMassager : MonoBehaviour
                 }
                 else if (newTextSeed < 60) {
                     if (textSeed < 20) message += "some feedback.";
-                    else if (textSeed < 40) message += "if you feel good.";
-                    else message += "if you want to continue.";
+                    else if (textSeed < 40) message += "your breathing.";
+                    else message += "you're in a good position.";
                 }
                 else if (newTextSeed < 80) {
                     if (textSeed < 60) message += "if ";

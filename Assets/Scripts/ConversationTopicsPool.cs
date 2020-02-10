@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AdvicesPool : MonoBehaviour
+public class ConversationTopicsPool : MonoBehaviour
 {
     List<string> advices;
 
