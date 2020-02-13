@@ -11,9 +11,9 @@ using UnityEngine.UI;
  -Have soothing music, maybe ASMR sounds? Music you can change!
  -Allow up to 4 controllers? Not for February playtesting
 
--Rework controls (in part to put the skip prompt on the controller instead) 
--At the beginning, explain the game a little bit more (there's no wrong way to play this game! You can switch whenever, ignore
-    some prompts, blablabla).
+-In the intro, wait for the player to increase and decrease the vibration.
+-Error: Make sure how it feels. Make sure if they want to continue.
+-Review the prompts times. They are wrong. 
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
 -Instruction type: cute quotes, wishes, general advices. "I hope you're feeling safe with each other."
 -Each wording should be also put in a "priority list"
@@ -45,7 +45,7 @@ public class BackMassager : MonoBehaviour
         conversations
     }
 
-    private void Awake() {
+    private void Start() {
         //Randomize the order the beginning with permutations
         bodyParts = new string[6]{"scapula", "middle of the back", "bottom of the back", "shoulder", "back of the head", "neck"};
 
@@ -66,13 +66,9 @@ public class BackMassager : MonoBehaviour
         if (timeSinceLastInstruction >= instructionTime) {
             GenerateNextInstruction();
         }
-
-        else if (Input.GetKeyDown(KeyCode.N)) {
-            GenerateNextInstruction();
-        }
     }
 
-    void GenerateNextInstruction() {
+    public void GenerateNextInstruction() {
         instructionMessage = BuildInstructionMessage(currentInstruction);
         ShowInstruction(instructionMessage);
         RandomizeInstruction();

@@ -16,7 +16,7 @@ public class ConversationTopicsPool : MonoBehaviour
             "Talk about your favorite topic.", "Discuss what you'll do afterwards.","Say something nice about each other", 
             "Is this awkward?", "Mute the music and hum a melody you like.", "Tell each other a secret.", 
             "Talk about something you're looking forward to in the next week or two.", "Why are you playing this together?",
-            "Name someone you like, and something you appreciate about them.", "Describe your ideal day.",
+            "Name someone you like, and something you appreciate about them.", "Describe your idea of a perfect day.",
             "Think of the most wholesome thing you can. You don't have to share it with each other."};
     }
 

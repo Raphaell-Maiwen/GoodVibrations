@@ -5778,6 +5778,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2073886865}
+  - component: {fileID: 2073886868}
   - component: {fileID: 2073886864}
   - component: {fileID: 2073886866}
   - component: {fileID: 2073886867}
@@ -5795,7 +5796,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073886863}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ca4009746756214abc8341983ad3e97, type: 3}
   m_Name: 
@@ -5828,25 +5829,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073886863}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6148a10df4c124345a2521f09d7dd6fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 13602738beea84544b351acf8aec2f6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentMode: 0
-  vibrationStength: 0
-  timePassedSinceLastChange: 0
-  timeUntilNextChange: 0
-  willIncrease: 0
-  _________________________________________: 0
-  timeRecorded: 0
-  vibratingValues: []
-  playbackIndex: 0
-  hasStartedRecording: 0
-  ________________________________________: 0
-  timeVibrating: 0
-  patternIndex1: 0
-  patternIndex2: 0
 --- !u!114 &2073886867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5859,6 +5846,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bd5554d9c11b3647974419482a942b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2073886868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073886863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6ae6ca6cf21184f93b21dbad791fcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textObject: {fileID: 1171546491}
 --- !u!1 &2136819676
 GameObject:
   m_ObjectHideFlags: 0
