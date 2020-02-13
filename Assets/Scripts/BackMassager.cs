@@ -14,6 +14,7 @@ using UnityEngine.UI;
 -In the intro, wait for the player to increase and decrease the vibration.
 -Error: Make sure how it feels. Make sure if they want to continue.
 -Review the prompts times. They are wrong. 
+-Pause a prompt?
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
 -Instruction type: cute quotes, wishes, general advices. "I hope you're feeling safe with each other."
 -Each wording should be also put in a "priority list"
