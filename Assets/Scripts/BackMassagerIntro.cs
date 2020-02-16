@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using XInputDotNetPure;
 
 public class BackMassagerIntro : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class BackMassagerIntro : MonoBehaviour
 
     int instructionsIndex = 0;
     string[] instructions;
+
+    float vibrationStrengh;
+    bool hasVibrationIncreased;
+    bool hasVibrationDecreased;
 
     void Awake()
     {
@@ -32,11 +37,27 @@ public class BackMassagerIntro : MonoBehaviour
         else if (firstPrompt && Input.GetButtonDown("RightButtonP1")) {
             SkipIntro();
         }
+        else if (instructionsIndex == 3 && Input.GetButtonDown("RBPlayer1")) {
+            vibrationStrengh += 0.1f;
+            vibrationStrengh = Mathf.Clamp(vibrationStrengh, 0f, 1f);
+            GamePad.SetVibration((PlayerIndex)0, vibrationStrengh, vibrationStrengh);
+            hasVibrationIncreased = true;
+        }
+        else if (instructionsIndex == 4 && Input.GetButtonDown("LBPlayer1")) {
+            vibrationStrengh -= 0.1f;
+            vibrationStrengh = Mathf.Clamp(vibrationStrengh, 0f, 1f);
+            GamePad.SetVibration((PlayerIndex)0, vibrationStrengh, vibrationStrengh);
+            hasVibrationDecreased = true;
+        }
     }
 
     void ShowNextInstruction() {
         if (instructionsIndex < instructions.Length) {
+            if (instructionsIndex == 3 && !hasVibrationIncreased) return;
+            if (instructionsIndex == 4 && !hasVibrationDecreased) return;
             textObject.text = instructions[instructionsIndex];
+            if (instructionsIndex == 4) GamePad.SetVibration((PlayerIndex)0, 0f, 0f);
+
             instructionsIndex++;
         }
         else SkipIntro();

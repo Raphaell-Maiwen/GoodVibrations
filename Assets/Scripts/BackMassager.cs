@@ -11,7 +11,6 @@ using UnityEngine.UI;
  -Have soothing music, maybe ASMR sounds? Music you can change!
  -Allow up to 4 controllers? Not for February playtesting
 
--In the intro, wait for the player to increase and decrease the vibration.
 -Pause a prompt?
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
 -Instruction type: cute quotes, wishes, general advices, food for thought. "I hope you're feeling safe with each other."
