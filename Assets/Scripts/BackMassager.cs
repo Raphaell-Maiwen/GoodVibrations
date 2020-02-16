@@ -12,12 +12,9 @@ using UnityEngine.UI;
  -Allow up to 4 controllers? Not for February playtesting
 
 -In the intro, wait for the player to increase and decrease the vibration.
--Error: Make sure how it feels. Make sure if they want to continue.
--Review the prompts times. They are wrong. 
 -Pause a prompt?
 -Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
--Instruction type: cute quotes, wishes, general advices. "I hope you're feeling safe with each other."
--Each wording should be also put in a "priority list"
+-Instruction type: cute quotes, wishes, general advices, food for thought. "I hope you're feeling safe with each other."
 -Add particle effects
 -Add sounds (something ASMR-ish, a soundtrack too?)
 */
@@ -34,6 +31,12 @@ public class BackMassager : MonoBehaviour
     public string currentRegion = "neck";
     public string[] bodyParts;
 
+    //Set it up right
+    public string[] regionWordings;
+
+    public string[] askingFeedbackSentences;
+    public int[] askingFeedbackIndexes; //Maybe useless?
+
     public Text textObject;
 
     ConversationTopicsPool advicesPool;
@@ -49,6 +52,12 @@ public class BackMassager : MonoBehaviour
     private void Start() {
         //Randomize the order the beginning with permutations
         bodyParts = new string[6]{"scapula", "middle of the back", "bottom of the back", "shoulder", "back of the head", "neck"};
+
+        askingFeedbackSentences = new string[9] {"it feels" , "it's strong enough", "they're comfortable", "they want to continue",
+                "some feedback", "you're both in a good position", "Check your breathing", "How can this moment be improved?",
+                "Are you both feeling good?"};
+
+        askingFeedbackIndexes = new int[9] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
         RandomizeTime();
         
@@ -72,8 +81,9 @@ public class BackMassager : MonoBehaviour
     public void GenerateNextInstruction() {
         instructionMessage = BuildInstructionMessage(currentInstruction);
         ShowInstruction(instructionMessage);
-        RandomizeInstruction();
         RandomizeTime();
+        RandomizeInstruction();
+        //RandomizeTime();
     }
 
     void RandomizeTime() {
@@ -100,6 +110,27 @@ public class BackMassager : MonoBehaviour
         }
 
         timeSinceLastInstruction = 0f;
+    }
+
+    int RandomizeInt(ref int[] array) {
+        int index = 0;
+
+        for (int i = 0; i < array.Length; i++) {
+            if (i == array.Length - 1) index = array.Length - 1;
+            else if (Random.Range(0f, 1f) > 0.5f) {
+                index = i;
+                break;
+            }
+        }
+
+        int result = array[index];
+
+        for (int j = index; j < array.Length - 1; j++) {
+            array[j] = array[j + 1];
+        }
+
+        array[array.Length - 1] = result;
+        return result;
     }
 
     //Make one "Randomize" function, pass the arrays as ref parameters?
@@ -186,48 +217,48 @@ public class BackMassager : MonoBehaviour
             message = advicesPool.GetAdvice();
         }
         else if (type == instructionType.askingFeedback) {
-            if (textSeed < 20) {
-                message += "Ask them ";
-            }
-            else if (textSeed < 40) {
-                message += "Check ";
-            }
-            else if (textSeed < 60) {
-                message += "Make sure ";
-            }
-            else if (textSeed < 80) {
-                message += "How can this moment be improved?";
-            }
-            else {
-                message += "Are you both feeling good?";
-            }
+            int index = RandomizeInt(ref askingFeedbackIndexes);
+            int rn = Random.Range(0, 100);
 
-            if (textSeed < 60) {
-                int newTextSeed = Random.Range(0, 100);
-                if (newTextSeed < 20) {
-                    if (textSeed < 60) message += "how ";
-                    message += "it feels";
-                    if (textSeed > 60) message += " good";
-                    message += ".";
+            /*
+                askingFeedbackSentences = new string[9] {"it feels" , "it's strong enough", "they're comfortable", "they want to continue",
+                "some feedback", "you're both in a good position", "Check your breathing", "How can this moment be improved?",
+                "Are you both feeling good?"};
+             */
+
+            if (index < 3) {
+                if (rn < 33) {
+                    message += "Ask them ";
+                    if (index < 1) message += "how " + askingFeedbackSentences[index];
+                    else {
+                        message += "if " + askingFeedbackSentences[index];
+                        if (index == 2) message += " good";
+                    }
                 }
-                else if (newTextSeed < 40) {
-                    if (textSeed < 40) message += "if ";
-                    message += "it's strong enough.";
-                }
-                else if (newTextSeed < 60) {
-                    if (textSeed < 20) message += "some feedback.";
-                    else if (textSeed < 40) message += "your breathing.";
-                    else message += "you're in a good position.";
-                }
-                else if (newTextSeed < 80) {
-                    if (textSeed < 60) message += "if ";
-                    message += "they want to continue.";
+                else if (rn < 66) {
+                    message += "Check ";
+                    if (index < 1) message += "how ";
+                    else message += "if ";
+                    message += askingFeedbackSentences[index];
                 }
                 else {
-                    if (textSeed < 60) message += "if ";
-                    message += "they're comfortable.";
+                    message += "Make sure " + askingFeedbackSentences[index];
+                    if (index == 0) message += " good";
                 }
+
             }
+            else if (index == 3) {
+                if (rn < 50) message += "Ask them if " + askingFeedbackSentences[index];
+                else message += "Check if " + askingFeedbackSentences[index];
+            }
+            else if (index == 4) message += "Ask " + askingFeedbackSentences[index];
+            else if (index == 5) {
+                if (rn < 50) message += "Check if " + askingFeedbackSentences[index];
+                else message += "Make sure " + askingFeedbackSentences[index];
+            }
+            else message += askingFeedbackSentences[index];
+
+            if(index < 7) message += ".";
         }
 
         return message;
