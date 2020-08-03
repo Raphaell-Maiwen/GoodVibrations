@@ -3,25 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using XInputDotNetPure;
 using UnityEngine.UI;
+using UnityEngine.Networking.PlayerConnection;
 
 /*
  Project-wise:
  -Have a menu
- -Have particle effects
- -Have soothing music, maybe ASMR sounds? Music you can change!
- -Allow up to 4 controllers? Not for February playtesting
+ -Have soothing music, maybe ASMR sounds? Music you can change! (Y to cycle)
+
+-Instruction type: cute quotes, wishes, general advices, food for thought. 
+    
+-Add particle effects (different for each level, random for the free mode - button to change it - X to cycle)
+-Have at least 40 conversation topics DONE, implement
+-Have at least 15 advices
+-Have at least 10 cutes quotes (50+ for the final version) I hope you're having fun! I hope this is relaxing for both of you. 
+
 
 -Pause a prompt?
--Instruction type: advice. Change pattern. Do you want to keep this pattern? Do a motion. Change the music? Is lighting good?
--Instruction type: cute quotes, wishes, general advices, food for thought. "I hope you're feeling safe with each other."
--Add particle effects
--Add sounds (something ASMR-ish, a soundtrack too?)
+-Better randomization
+-Bite-size experiences
+
+DONE:
+-Suggest to switch roles after 3 minutes
 */
 
 public class BackMassager : MonoBehaviour
 {
     public float timeSinceLastInstruction;
     public float instructionTime;
+
+    private float switchRolesTimer;
+    private float switchRolesCue = 180f;
+    private bool suggestedSwitch = false;
 
     public instructionType[] instructions;
 
@@ -34,43 +46,58 @@ public class BackMassager : MonoBehaviour
     public string[] regionWordings;
 
     public string[] askingFeedbackSentences;
-    public int[] askingFeedbackIndexes; //Maybe useless?
+    public int[] askingFeedbackIndexes;
+
+    public string[] advices;
 
     public Text textObject;
 
-    ConversationTopicsPool advicesPool;
+    ConversationTopicsPool topicsPool;
 
     string instructionMessage;
 
     public enum instructionType { 
         askingFeedback,
         changeRegion,
-        conversations
+        conversations,
+        advice,
+        switchingRoles
     }
 
     private void Start() {
         //Randomize the order the beginning with permutations
-        bodyParts = new string[6]{"scapula", "middle of the back", "bottom of the back", "shoulder", "back of the head", "neck"};
+        bodyParts = new string[6]{"top of the back", "middle of the back", "bottom of the back", "shoulder", "back of the head", "neck"};
 
         askingFeedbackSentences = new string[9] {"it feels" , "it's strong enough", "they're comfortable", "they want to continue",
-                "some feedback", "you're both in a good position", "Check your breathing", "How can this moment be improved?",
+                "some feedback", "you're both in a good position", "Take some deep breaths", "How can this moment be improved?",
                 "Are you both feeling good?"};
 
         askingFeedbackIndexes = new int[9] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
+        //Add something about the music when it'll be possible to change it?
+        //Have at least 15?
+        advices = new string[8] {"Is the lighting good?", "Is the music too loud?", "You could try a different motion!", 
+                                "Don't hesitate to go back to a previous topic.", "You can keep talking when a new prompt shows up.",
+                                "It's ok to be silent sometimes!", "You can do eyes contact once in a while.", "Remember to stay hydrated!"};
+        
         RandomizeTime();
         
         ShowInstruction("Put the controller on your friend's neck.");
         GamePad.SetVibration((PlayerIndex)0, 0.2f, 0.2f);
 
-        instructions = new instructionType[3]{instructionType.changeRegion, instructionType.askingFeedback, instructionType.conversations};
+        instructions = new instructionType[3] { instructionType.changeRegion, instructionType.askingFeedback, instructionType.conversations };
+                                                //instructionType.advice};
+        //instructions = new instructionType[1] {instructionType.advice};
+
+
         RandomizeInstruction();
 
-        advicesPool = GetComponent<ConversationTopicsPool>();
+        topicsPool = GetComponent<ConversationTopicsPool>();
     }
 
     void Update(){
         timeSinceLastInstruction += Time.deltaTime;
+        switchRolesTimer += Time.deltaTime;
 
         if (timeSinceLastInstruction >= instructionTime) {
             GenerateNextInstruction();
@@ -78,11 +105,25 @@ public class BackMassager : MonoBehaviour
     }
 
     public void GenerateNextInstruction() {
-        instructionMessage = BuildInstructionMessage(currentInstruction);
-        ShowInstruction(instructionMessage);
-        RandomizeTime();
+        if (!suggestedSwitch && switchRolesTimer >= switchRolesCue) {
+            SuggestSwitchingRoles();
+            instructionMessage = BuildInstructionMessage(currentInstruction);
+            ShowInstruction(instructionMessage);
+        }
+        else {
+            instructionMessage = BuildInstructionMessage(currentInstruction);
+            ShowInstruction(instructionMessage);
+            RandomizeTime();
+        }
+
         RandomizeInstruction();
-        //RandomizeTime();
+    }
+
+    void SuggestSwitchingRoles() {
+        timeSinceLastInstruction = 0f;
+        instructionTime = 8f;
+        suggestedSwitch = true;
+        currentInstruction = instructionType.switchingRoles;
     }
 
     void RandomizeTime() {
@@ -213,7 +254,7 @@ public class BackMassager : MonoBehaviour
             }
         }
         else if (type == instructionType.conversations) {
-            message = advicesPool.GetAdvice();
+            message = topicsPool.GetAdvice();
         }
         else if (type == instructionType.askingFeedback) {
             int index = RandomizeInt(ref askingFeedbackIndexes);
@@ -257,7 +298,10 @@ public class BackMassager : MonoBehaviour
             }
             else message += askingFeedbackSentences[index];
 
-            if(index < 7) message += ".";
+            if (index < 7) message += ".";
+        }
+        else if (type == instructionType.switchingRoles) {
+            message = "You can switch roles if you want!";
         }
 
         return message;
