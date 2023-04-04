@@ -274,7 +274,6 @@ public class FreeMode : MonoBehaviour
                 vibrationStength = vibrations[patternIndex1][patternIndex2].intensity;
             }
         }
-
         GamePad.SetVibration((PlayerIndex)0, vibrationStength, vibrationStength);
     }
 }
