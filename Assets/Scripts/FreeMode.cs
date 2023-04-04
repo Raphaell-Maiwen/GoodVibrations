@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XInputDotNetPure;
 
-public class StraightUpVibrator : MonoBehaviour
+public class FreeMode : MonoBehaviour
 {
     /*
     -Patterns where the two halves have different strenghts
