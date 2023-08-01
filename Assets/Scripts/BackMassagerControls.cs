@@ -18,15 +18,15 @@ public class BackMassagerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("RBPlayer1")) {
+        if (Input.GetButtonDown("RBPlayer1") || Input.GetKeyDown(KeyCode.RightArrow)) {
             vibrationStrength += 0.1f;
             GamePad.SetVibration((PlayerIndex)0, vibrationStrength, vibrationStrength);
         }
-        else if (Input.GetButtonDown("LBPlayer1")) {
+        else if (Input.GetButtonDown("LBPlayer1") || Input.GetKeyDown(KeyCode.LeftArrow)) {
             vibrationStrength -= 0.1f;
             GamePad.SetVibration((PlayerIndex)0, vibrationStrength, vibrationStrength);
         }
-        else if (Input.GetButtonDown("RightButtonP1")) {
+        else if (Input.GetButtonDown("RightButtonP1") || Input.GetKeyDown(KeyCode.Space)) {
             massagerScript.GenerateNextInstruction();
         }
         vibrationStrength = Mathf.Clamp(vibrationStrength, 0f, 1f);
