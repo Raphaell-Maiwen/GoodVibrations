@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using XInputDotNetPure;
 
 public class BackMassagerControls : MonoBehaviour
 {
     private float vibrationStrength = 0.2f;
     private BackMassager massagerScript;
+    public Text subText;
 
     // Start is called before the first frame update
     void Start()
     {
         GamePad.SetVibration((PlayerIndex)0, vibrationStrength, vibrationStrength);
         massagerScript = GetComponent<BackMassager>();
+        subText.text = "";
     }
 
     // Update is called once per frame

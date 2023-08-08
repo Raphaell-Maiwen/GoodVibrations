@@ -95,14 +95,14 @@ public class BackMassager : MonoBehaviour
         topicsPool = GetComponent<ConversationTopicsPool>();
     }
 
-    void Update(){
+    /*void Update(){
         timeSinceLastInstruction += Time.deltaTime;
         switchRolesTimer += Time.deltaTime;
 
         if (timeSinceLastInstruction >= instructionTime) {
             GenerateNextInstruction();
         }
-    }
+    }*/
 
     public void GenerateNextInstruction() {
         if (!suggestedSwitch && switchRolesTimer >= switchRolesCue) {
